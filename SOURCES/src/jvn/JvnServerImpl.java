@@ -9,21 +9,23 @@
 
 package jvn;
 
+import java.rmi.Naming;
+import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.io.*;
 
 
-
-public class JvnServerImpl 	
+public class JvnServerImpl
               extends UnicastRemoteObject 
 							implements JvnLocalServer, JvnRemoteServer{ 
 	
   /**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	// A JVN server is managed as a singleton 
 	private static JvnServerImpl js = null;
+	private JvnRemoteCoord jvnRemoteCoord;
 
   /**
   * Default constructor
@@ -31,7 +33,8 @@ public class JvnServerImpl
   **/
 	private JvnServerImpl() throws Exception {
 		super();
-		// to be completed
+		// Find reference to jvnRemoteCoord
+		jvnRemoteCoord = (JvnRemoteCoord) Naming.lookup("rmi://localhost/Coord");
 	}
 	
   /**
@@ -66,8 +69,12 @@ public class JvnServerImpl
 	**/
 	public  JvnObject jvnCreateObject(Serializable o)
 	throws jvn.JvnException { 
-		// to be completed 
-		return null; 
+		try {
+			return new JvnObjectImpl(jvnRemoteCoord.jvnGetObjectId(), o, this);
+		} catch (RemoteException e){
+			e.printStackTrace();
+			throw new JvnException();
+		}
 	}
 	
 	/**
@@ -78,7 +85,13 @@ public class JvnServerImpl
 	**/
 	public  void jvnRegisterObject(String jon, JvnObject jo)
 	throws jvn.JvnException {
-		// to be completed 
+
+		try {
+			jvnRemoteCoord.jvnRegisterObject(jon, jo, this);
+		} catch (RemoteException e){
+			e.printStackTrace();
+			throw new JvnException();
+		}
 	}
 	
 	/**
@@ -89,12 +102,17 @@ public class JvnServerImpl
 	**/
 	public  JvnObject jvnLookupObject(String jon)
 	throws jvn.JvnException {
-    // to be completed 
-		return null;
+		try {
+			return jvnRemoteCoord.jvnLookupObject(jon, this);
+		} catch (RemoteException e){
+			e.printStackTrace();
+			throw new JvnException();
+		}
 	}	
-	
+
 	/**
-	* Get a Read lock on a JVN object 
+	* Get a Read lock on a JVN object.
+	 * Called by JvnObject.
 	* @param joi : the JVN object identification
 	* @return the current JVN object state
 	* @throws  JvnException
@@ -106,7 +124,8 @@ public class JvnServerImpl
 
 	}	
 	/**
-	* Get a Write lock on a JVN object 
+	* Get a Write lock on a JVN object
+	 * Called by JvnObject.
 	* @param joi : the JVN object identification
 	* @return the current JVN object state
 	* @throws  JvnException

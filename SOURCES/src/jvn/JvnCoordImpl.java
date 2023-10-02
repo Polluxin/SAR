@@ -9,6 +9,7 @@
 
 package jvn;
 
+import java.rmi.Naming;
 import java.rmi.server.UnicastRemoteObject;
 import java.io.Serializable;
 
@@ -30,6 +31,16 @@ public class JvnCoordImpl
 	private JvnCoordImpl() throws Exception {
 		// to be completed
 	}
+
+    public static void main(String argv[]) {
+        try {
+            Naming.rebind("rmi://localhost/Coord", new JvnCoordImpl());
+            System.out.println("Coordinator ready");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
 
   /**
   *  Allocate a NEW JVN object id (usually allocated to a 
