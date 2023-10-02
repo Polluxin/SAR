@@ -6,8 +6,8 @@ import java.util.List;
 
 public class JvnNamingService {
 
-    HashMap<Integer, List<String>> stringsFromId;
-    HashMap<String, Integer> idFromString;
+    private HashMap<Integer, List<String>> stringsFromId;
+    private HashMap<String, Integer> idFromString;
 
     JvnNamingService() {
         stringsFromId = new HashMap<>();
@@ -20,6 +20,10 @@ public class JvnNamingService {
 
     List<String> getStrings(Integer id){
         return stringsFromId.get(id);
+    }
+
+    boolean containsString(String name){
+        return idFromString.containsKey(name);
     }
 
     void addName(String name, Integer id) throws JvnException {

@@ -12,6 +12,9 @@ package jvn;
 import java.rmi.Naming;
 import java.rmi.server.UnicastRemoteObject;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 
 public class JvnCoordImpl 	
@@ -23,13 +26,22 @@ public class JvnCoordImpl
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+    private Integer idSeq;
+    private JvnNamingService namingService;
+    private HashMap<Integer, List<JvnRemoteServer>> readersFromId;
+    private HashMap<Integer, JvnRemoteServer> writersFromId;
+    private HashMap<Integer, JvnObject> sharedObjects;
 
 /**
   * Default constructor
   * @throws JvnException
   **/
 	private JvnCoordImpl() throws Exception {
-		// to be completed
+        idSeq = -1;
+		namingService = new JvnNamingService();
+        readersFromId = new HashMap<>();
+        writersFromId = new HashMap<>();
+        sharedObjects = new HashMap<>();
 	}
 
     public static void main(String argv[]) {
@@ -49,21 +61,24 @@ public class JvnCoordImpl
   **/
   public int jvnGetObjectId()
   throws java.rmi.RemoteException,jvn.JvnException {
-    // to be completed 
-    return 0;
+    idSeq++;
+    return idSeq;
   }
   
   /**
-  * Associate a symbolic name with a JVN object
+  * Associate a symbolic name with a JVN object.
+   * Use the JvnNamingService.
   * @param jon : the JVN object name
-  * @param jo  : the JVN object 
-  * @param joi : the JVN object identification
+  * @param jo  : the JVN object
   * @param js  : the remote reference of the JVNServer
   * @throws java.rmi.RemoteException,JvnException
   **/
   public void jvnRegisterObject(String jon, JvnObject jo, JvnRemoteServer js)
   throws java.rmi.RemoteException,jvn.JvnException{
-    // to be completed 
+    namingService.addName(jon, jo.jvnGetObjectId());
+    readersFromId.put(jo.jvnGetObjectId(), new ArrayList<>());
+    writersFromId.put(jo.jvnGetObjectId(), null);
+    sharedObjects.put(jo.jvnGetObjectId(), jo);
   }
   
   /**
@@ -74,8 +89,9 @@ public class JvnCoordImpl
   **/
   public JvnObject jvnLookupObject(String jon, JvnRemoteServer js)
   throws java.rmi.RemoteException,jvn.JvnException{
-    // to be completed 
-    return null;
+    if (!namingService.containsString(jon))
+        throw new JvnException("Unknown object named "+jon);
+    return sharedObjects.get(namingService.getId(jon));
   }
   
   /**
