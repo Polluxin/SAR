@@ -181,7 +181,6 @@ public class JvnServerImpl
 	throws java.rmi.RemoteException,jvn.JvnException {
 	  JvnObject jvnObject = jvnObjectHashMap.get(joi);
 	  jvnObject.jvnInvalidateWriter(); // /!\ May not be the good way
-	  jvnRemoteCoord.notify();
 		return null;
 	};
 	
@@ -195,7 +194,6 @@ public class JvnServerImpl
 	 throws java.rmi.RemoteException,jvn.JvnException {
 	   JvnObject jvnObject = jvnObjectHashMap.get(joi);
 	   jvnObject.jvnInvalidateWriterForReader(); // /!\ May not be the good way
-	   jvnRemoteCoord.notify();
 		return null;
 	 };
 

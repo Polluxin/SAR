@@ -98,8 +98,17 @@ public class JvnCoordImpl
   **/
    public Serializable jvnLockRead(int joi, JvnRemoteServer js)
    throws java.rmi.RemoteException, JvnException{
-    // to be completed
-    return null;
+       // Check if there is a writer
+       JvnObject jvnObject;
+        if (writersFromId.get(joi) != null) {
+            jvnObject = (JvnObject) writersFromId.get(joi).jvnInvalidateWriterForReader(joi);
+            writersFromId.put(joi, null);
+        }
+        else {
+            jvnObject = sharedObjects.get(joi);
+        }
+        readersFromId.get(joi).add(js);
+        return jvnObject;
    }
 
   /**
@@ -111,8 +120,22 @@ public class JvnCoordImpl
   **/
    public Serializable jvnLockWrite(int joi, JvnRemoteServer js)
    throws java.rmi.RemoteException, JvnException{
-    // to be completed
-    return null;
+       // Invalidate writers
+       JvnObject jvnObject;
+       if (writersFromId.get(joi) != null){
+           jvnObject = (JvnObject) writersFromId.get(joi).jvnInvalidateWriter(joi);
+           writersFromId.put(joi, null);
+       }
+       else {
+           jvnObject = sharedObjects.get(joi);
+       }
+       // Invalidate readers
+       for (JvnRemoteServer server: readersFromId.get(joi)){
+           server.jvnInvalidateReader(joi);
+           readersFromId.get(joi).remove(server);
+       }
+       writersFromId.put(joi, js);
+       return jvnObject;
    }
 
 	/**
@@ -122,11 +145,11 @@ public class JvnCoordImpl
 	**/
     public void jvnTerminate(JvnRemoteServer js)
 	 throws java.rmi.RemoteException, JvnException {
-	 for (Integer id: sharedObjects.keySet()){
-         if (writersFromId.get(id) == js)
-             writersFromId.put(id, null);
-         readersFromId.get(id).removeIf(server -> server == js);
-     }
+         for (Integer id: sharedObjects.keySet()){
+             if (writersFromId.get(id) == js)
+                 writersFromId.put(id, null);
+             readersFromId.get(id).removeIf(server -> server == js);
+         }
     }
 }
 
