@@ -2,8 +2,7 @@
  * JAVANAISE Implementation
  * JvnCoordImpl class
  * This class implements the Javanaise central coordinator
- * Contact:  
- *
+ * Contact:
  * Authors: 
  */
 
@@ -27,15 +26,14 @@ public class JvnCoordImpl
 	 */
 	private static final long serialVersionUID = 1L;
     private Integer idSeq;
-    private JvnNamingService namingService;
-    private HashMap<Integer, List<JvnRemoteServer>> readersFromId;
-    private HashMap<Integer, JvnRemoteServer> writersFromId;
-    private HashMap<Integer, JvnObject> sharedObjects;
+    private final JvnNamingService namingService;
+    private final HashMap<Integer, List<JvnRemoteServer>> readersFromId;
+    private final HashMap<Integer, JvnRemoteServer> writersFromId;
+    private final HashMap<Integer, JvnObject> sharedObjects;
 
 /**
   * Default constructor
-  * @throws JvnException
-  **/
+ **/
 	private JvnCoordImpl() throws Exception {
         idSeq = -1;
 		namingService = new JvnNamingService();
@@ -44,7 +42,7 @@ public class JvnCoordImpl
         sharedObjects = new HashMap<>();
 	}
 
-    public static void main(String argv[]) {
+    public static void main(String[] argv) {
         try {
             Naming.rebind("rmi://localhost/Coord", new JvnCoordImpl());
             System.out.println("Coordinator ready");
@@ -57,8 +55,7 @@ public class JvnCoordImpl
   /**
   *  Allocate a NEW JVN object id (usually allocated to a 
   *  newly created JVN object)
-  * @throws java.rmi.RemoteException,JvnException
-  **/
+   **/
   public int jvnGetObjectId()
   throws java.rmi.RemoteException,jvn.JvnException {
     idSeq++;
@@ -71,8 +68,7 @@ public class JvnCoordImpl
   * @param jon : the JVN object name
   * @param jo  : the JVN object
   * @param js  : the remote reference of the JVNServer
-  * @throws java.rmi.RemoteException,JvnException
-  **/
+   **/
   public void jvnRegisterObject(String jon, JvnObject jo, JvnRemoteServer js)
   throws java.rmi.RemoteException,jvn.JvnException{
     namingService.addName(jon, jo.jvnGetObjectId());
@@ -85,8 +81,7 @@ public class JvnCoordImpl
   * Get the reference of a JVN object managed by a given JVN server 
   * @param jon : the JVN object name
   * @param js : the remote reference of the JVNServer
-  * @throws java.rmi.RemoteException,JvnException
-  **/
+   **/
   public JvnObject jvnLookupObject(String jon, JvnRemoteServer js)
   throws java.rmi.RemoteException,jvn.JvnException{
     if (!namingService.containsString(jon))
