@@ -127,7 +127,11 @@ public class JvnCoordImpl
 	**/
     public void jvnTerminate(JvnRemoteServer js)
 	 throws java.rmi.RemoteException, JvnException {
-	 // to be completed
+	 for (Integer id: sharedObjects.keySet()){
+         if (writersFromId.get(id) == js)
+             writersFromId.put(id, null);
+         readersFromId.get(id).removeIf(server -> server == js);
+     }
     }
 }
 
