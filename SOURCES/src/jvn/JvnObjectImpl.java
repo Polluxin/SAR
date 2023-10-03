@@ -61,9 +61,11 @@ public class JvnObjectImpl implements JvnObject{
         switch (lock){
             case R:
                 lock = RC;
+                notify();
                 break;
             case W:
                 lock = WC;
+                notify();
                 break;
             default:
                 throw new JvnException("Lock is not currently used");
@@ -91,8 +93,10 @@ public class JvnObjectImpl implements JvnObject{
                     throw new JvnException("jvnInvalidateReader: Thread interrupted when waiting for lock");
                 }
                 lock = NL;
+                break;
             case RC:
                 lock = NL;
+                break;
             case RWC:
                 lock = WC;
                 break;
@@ -103,6 +107,25 @@ public class JvnObjectImpl implements JvnObject{
 
     @Override
     public Serializable jvnInvalidateWriter() throws JvnException {
+        switch (lock){
+            case W:
+                try {
+                    while (lock == W)
+                        wait();
+                } catch (InterruptedException e) {
+                    throw new JvnException("jvnInvalidateWriter: Thread interrupted when waiting for lock");
+                }
+                lock = NL;
+                break;
+            case WC:
+                lock = NL;
+                break;
+            case RWC:
+                lock = RC;
+                break;
+            default:
+                throw new JvnException("LockIllagalState: cannot be in the state "+lock+" when jvnInvalidateWriter() is called");
+        }
         return null;
     }
 
