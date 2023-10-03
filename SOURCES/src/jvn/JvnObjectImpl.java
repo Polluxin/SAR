@@ -77,12 +77,28 @@ public class JvnObjectImpl implements JvnObject{
 
     @Override
     public Serializable jvnGetSharedObject() throws JvnException {
-        return null;
+        return object;
     }
 
     @Override
     public void jvnInvalidateReader() throws JvnException {
-
+        switch (lock){
+            case R:
+                try {
+                    while (lock == R)
+                        wait();
+                } catch (InterruptedException e) {
+                    throw new JvnException("jvnInvalidateReader: Thread interrupted when waiting for lock");
+                }
+                lock = NL;
+            case RC:
+                lock = NL;
+            case RWC:
+                lock = WC;
+                break;
+            default:
+                throw new JvnException("LockIllagalState: cannot be in the state "+lock+" when jvnInvalidateReader() is called");
+        }
     }
 
     @Override
