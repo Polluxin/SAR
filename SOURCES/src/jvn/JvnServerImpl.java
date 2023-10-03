@@ -9,8 +9,11 @@
 
 package jvn;
 
+import java.net.MalformedURLException;
 import java.rmi.Naming;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
 import java.io.*;
 import java.util.HashMap;
@@ -33,10 +36,12 @@ public class JvnServerImpl
   * Default constructor
   * @throws JvnException
   **/
-	private JvnServerImpl() throws Exception {
+	private JvnServerImpl() throws MalformedURLException, NotBoundException, RemoteException {
 		super();
 		// Find reference to jvnRemoteCoord
-		jvnRemoteCoord = (JvnRemoteCoord) Naming.lookup("rmi://localhost/Coord");
+		jvnRemoteCoord = (JvnRemoteCoord) LocateRegistry.getRegistry().lookup("Coord");
+		assert(jvnRemoteCoord != null);
+//		jvnRemoteCoord = (JvnRemoteCoord) Naming.lookup("rmi://localhost/Coord");
 		jvnObjectHashMap = new HashMap<>();
 	}
 	
@@ -45,12 +50,12 @@ public class JvnServerImpl
     * a JVN server instance
     * @throws JvnException
     **/
-	public static JvnServerImpl jvnGetServer() {
+	public static JvnServerImpl jvnGetServer() throws JvnException {
 		if (js == null){
 			try {
 				js = new JvnServerImpl();
 			} catch (Exception e) {
-				return null;
+				throw new JvnException("Cannot get the server instance: "+ e.getMessage());
 			}
 		}
 		return js;
@@ -77,10 +82,10 @@ public class JvnServerImpl
 	public  JvnObject jvnCreateObject(Serializable o)
 	throws jvn.JvnException { 
 		try {
+			assert(jvnRemoteCoord != null);
 			return new JvnObjectImpl(jvnRemoteCoord.jvnGetObjectId(), o, this);
 		} catch (RemoteException e){
-			e.printStackTrace();
-			throw new JvnException();
+			throw new JvnException("jvnCreateObject: "+e.getMessage());
 		}
 	}
 	
@@ -98,8 +103,7 @@ public class JvnServerImpl
 			// Save object reference
 			jvnObjectHashMap.put(jo.jvnGetObjectId(), jo);
 		} catch (RemoteException e){
-			e.printStackTrace();
-			throw new JvnException();
+			throw new JvnException("jvnRegisterObject: "+e.getMessage());
 		}
 	}
 	
@@ -114,11 +118,11 @@ public class JvnServerImpl
 		try {
 			JvnObject obj =  jvnRemoteCoord.jvnLookupObject(jon, this);
 			// Save object reference
-			jvnObjectHashMap.put(obj.jvnGetObjectId(), obj);
+			if (obj != null)
+				jvnObjectHashMap.put(obj.jvnGetObjectId(), obj);
 			return obj;
 		} catch (RemoteException e){
-			e.printStackTrace();
-			throw new JvnException();
+			throw new JvnException("jvnLookupObject: "+e.getMessage());
 		}
 	}	
 
@@ -134,8 +138,7 @@ public class JvnServerImpl
 	   try {
 		   return jvnRemoteCoord.jvnLockRead(joi, this);
 	   } catch (RemoteException e){
-		   e.printStackTrace();
-		   throw new JvnException();
+		   throw new JvnException("jvnLockRead: "+e.getMessage());
 	   }
 	}
 
@@ -151,8 +154,7 @@ public class JvnServerImpl
 	   try {
 		   return jvnRemoteCoord.jvnLockWrite(joi, this);
 	   } catch (RemoteException e){
-		   e.printStackTrace();
-		   throw new JvnException();
+		   throw new JvnException("jvnLockWrite: "+e.getMessage());
 	   }
 	}	
 

@@ -6,7 +6,7 @@ import static jvn.JvnLock.*;
 
 public class JvnObjectImpl implements JvnObject{
 
-    JvnLock lock = NL;
+    JvnLock lock = W;
     int id;
     Serializable object;
     JvnLocalServer jvnLocalServer;
@@ -34,7 +34,7 @@ public class JvnObjectImpl implements JvnObject{
                 // Lock is already taken by application
                 break;
             case W:
-                throw new JvnException("Lock already taken in writer mode");
+                throw new JvnException("jvnLockRead: Lock already taken in writer mode");
         }
     }
 
@@ -52,7 +52,7 @@ public class JvnObjectImpl implements JvnObject{
                 // Lock is already taken by application
                 break;
             case R:
-                throw new JvnException("Lock already taken in reader mode");
+                throw new JvnException("jvnLockWrite: Lock already taken in reader mode");
         }
     }
 
@@ -68,7 +68,7 @@ public class JvnObjectImpl implements JvnObject{
                 notify();
                 break;
             default:
-                throw new JvnException("Lock is not currently used");
+                throw new JvnException("jvnUnLock: Lock is not currently used");
         }
     }
 
@@ -124,7 +124,7 @@ public class JvnObjectImpl implements JvnObject{
                 lock = RC;
                 break;
             default:
-                throw new JvnException("LockIllagalState: cannot be in the state "+lock+" when jvnInvalidateWriter() is called");
+                throw new JvnException("jvnInvalidateWriter: LockIllagalState: cannot be in the state "+lock+" when jvnInvalidateWriter() is called");
         }
         return object;
     }
@@ -148,7 +148,7 @@ public class JvnObjectImpl implements JvnObject{
                 lock = RC;
                 break;
             default:
-                throw new JvnException("LockIllagalState: cannot be in the state "+lock+" when jvnInvalidateWriterForReader() is called");
+                throw new JvnException("jvnInvalidateWriterForReader: LockIllagalState: cannot be in the state "+lock+" when jvnInvalidateWriterForReader() is called");
         }
         return object;
     }

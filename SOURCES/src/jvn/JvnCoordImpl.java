@@ -9,6 +9,8 @@
 package jvn;
 
 import java.rmi.Naming;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -44,7 +46,9 @@ public class JvnCoordImpl
 
     public static void main(String[] argv) {
         try {
-            Naming.rebind("rmi://localhost/Coord", new JvnCoordImpl());
+            Registry registry = LocateRegistry.createRegistry(1099);
+            registry.bind("Coord", new JvnCoordImpl());
+//            Naming.rebind("rmi://localhost/Coord", new JvnCoordImpl());
             System.out.println("Coordinator ready");
         } catch (Exception e) {
             e.printStackTrace();
@@ -85,7 +89,7 @@ public class JvnCoordImpl
   public JvnObject jvnLookupObject(String jon, JvnRemoteServer js)
   throws java.rmi.RemoteException,jvn.JvnException{
     if (!namingService.containsString(jon))
-        throw new JvnException("Unknown object named "+jon);
+        return null;
     return sharedObjects.get(namingService.getId(jon));
   }
   
