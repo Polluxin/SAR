@@ -126,11 +126,30 @@ public class JvnObjectImpl implements JvnObject{
             default:
                 throw new JvnException("LockIllagalState: cannot be in the state "+lock+" when jvnInvalidateWriter() is called");
         }
-        return null;
+        return object;
     }
 
     @Override
     public Serializable jvnInvalidateWriterForReader() throws JvnException {
-        return null;
+        switch (lock){
+            case W:
+                try {
+                    while (lock == W)
+                        wait();
+                } catch (InterruptedException e) {
+                    throw new JvnException("jvnInvalidateWriterForReader: Thread interrupted when waiting for lock");
+                }
+                lock = RC;
+                break;
+            case WC:
+                lock = NL;
+                break;
+            case RWC:
+                lock = RC;
+                break;
+            default:
+                throw new JvnException("LockIllagalState: cannot be in the state "+lock+" when jvnInvalidateWriterForReader() is called");
+        }
+        return object;
     }
 }
