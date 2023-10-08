@@ -57,7 +57,7 @@ public class JvnObjectImpl implements JvnObject{
     }
 
     @Override
-    public void jvnUnLock() throws JvnException {
+    public synchronized void jvnUnLock() throws JvnException {
         switch (lock){
             case R:
                 lock = RC;
@@ -83,7 +83,7 @@ public class JvnObjectImpl implements JvnObject{
     }
 
     @Override
-    public void jvnInvalidateReader() throws JvnException {
+    public synchronized void jvnInvalidateReader() throws JvnException {
         switch (lock){
             case R:
                 try {
@@ -106,7 +106,7 @@ public class JvnObjectImpl implements JvnObject{
     }
 
     @Override
-    public Serializable jvnInvalidateWriter() throws JvnException {
+    public synchronized Serializable jvnInvalidateWriter() throws JvnException {
         switch (lock){
             case W:
                 try {
@@ -130,7 +130,7 @@ public class JvnObjectImpl implements JvnObject{
     }
 
     @Override
-    public Serializable jvnInvalidateWriterForReader() throws JvnException {
+    public synchronized Serializable jvnInvalidateWriterForReader() throws JvnException {
         switch (lock){
             case W:
                 try {
