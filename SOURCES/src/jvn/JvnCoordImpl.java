@@ -14,6 +14,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 
@@ -64,7 +65,7 @@ public class JvnCoordImpl
   *  Allocate a NEW JVN object id (usually allocated to a 
   *  newly created JVN object)
    **/
-  public int jvnGetObjectId()
+  public synchronized int jvnGetObjectId()
   throws java.rmi.RemoteException,jvn.JvnException {
     idSeq++;
     return idSeq;
@@ -77,7 +78,7 @@ public class JvnCoordImpl
   * @param jo  : the JVN object
   * @param js  : the remote reference of the JVNServer
    **/
-  public void jvnRegisterObject(String jon, JvnObject jo, JvnRemoteServer js)
+  public synchronized void jvnRegisterObject(String jon, JvnObject jo, JvnRemoteServer js)
   throws java.rmi.RemoteException,jvn.JvnException{
     namingService.addName(jon, jo.jvnGetObjectId());
     readersFromId.put(jo.jvnGetObjectId(), new ArrayList<>());
@@ -90,7 +91,7 @@ public class JvnCoordImpl
   * @param jon : the JVN object name
   * @param js : the remote reference of the JVNServer
    **/
-  public JvnObject jvnLookupObject(String jon, JvnRemoteServer js)
+  public synchronized JvnObject jvnLookupObject(String jon, JvnRemoteServer js)
   throws java.rmi.RemoteException,jvn.JvnException{
     if (!namingService.containsString(jon))
         return null;
@@ -111,6 +112,7 @@ public class JvnCoordImpl
         if (writersFromId.get(joi) != null) {
             jvnObject = (JvnObject) writersFromId.get(joi).jvnInvalidateWriterForReader(joi);
             writersFromId.put(joi, null);
+            sharedObjects.put(joi, jvnObject);
         }
         else {
             jvnObject = sharedObjects.get(joi);
@@ -126,21 +128,26 @@ public class JvnCoordImpl
   * @return the current JVN object state
   * @throws java.rmi.RemoteException, JvnException
   **/
-   public Serializable jvnLockWrite(int joi, JvnRemoteServer js)
+   public synchronized Serializable jvnLockWrite(int joi, JvnRemoteServer js)
    throws java.rmi.RemoteException, JvnException{
        // Invalidate writers
        JvnObject jvnObject;
        if (writersFromId.get(joi) != null){
            jvnObject = (JvnObject) writersFromId.get(joi).jvnInvalidateWriter(joi);
            writersFromId.put(joi, null);
+           sharedObjects.put(joi, jvnObject);
        }
        else {
            jvnObject = sharedObjects.get(joi);
        }
+
+       Iterator<JvnRemoteServer> serverIterator = readersFromId.get(joi).iterator();
+
        // Invalidate readers
-       for (JvnRemoteServer server: readersFromId.get(joi)){
+       while (serverIterator.hasNext()){
+           JvnRemoteServer server = serverIterator.next();
            server.jvnInvalidateReader(joi);
-           readersFromId.get(joi).remove(server);
+           serverIterator.remove();
        }
        writersFromId.put(joi, js);
        return jvnObject;
@@ -151,7 +158,7 @@ public class JvnCoordImpl
 	* @param js  : the remote reference of the server
 	* @throws java.rmi.RemoteException, JvnException
 	**/
-    public void jvnTerminate(JvnRemoteServer js)
+    public synchronized void jvnTerminate(JvnRemoteServer js)
 	 throws java.rmi.RemoteException, JvnException {
          for (Integer id: sharedObjects.keySet()){
              if (writersFromId.get(id) == js)

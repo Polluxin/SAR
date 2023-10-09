@@ -6,63 +6,58 @@ import static jvn.JvnLock.*;
 
 public class JvnObjectImpl implements JvnObject{
 
-    JvnLock lock = W;
+    JvnLock lock = NL;
     int id;
     Serializable object;
-    transient JvnLocalServer jvnLocalServer;
 
-    public JvnObjectImpl(int id, Serializable o, JvnLocalServer jvnLocalServer) {
+    public JvnObjectImpl(int id, Serializable o) {
         this.id = id;
         object = o;
-        this.jvnLocalServer = jvnLocalServer;
-    }
-
-    @Override
-    public void setJvnLocalServer(JvnLocalServer js) {
-        jvnLocalServer = js;
     }
 
     @Override
     public void jvnLockRead() throws JvnException {
+        System.out.print("Read : OldLock = " + lock+ " ");
         switch (lock){
             case NL:
-                jvnLocalServer.jvnLockRead(id);
+                object = ((JvnObject) JvnServerImpl.jvnGetServer().jvnLockRead(id)).jvnGetSharedObject();
                 lock = R;
                 break;
-            case RC, RWC:
+            case RC:
                 lock = R;
                 break;
             case WC:
                 lock = RWC;
                 break;
-            case R:
-                // Lock is already taken by application
-                break;
             case W:
                 throw new JvnException("jvnLockRead: Lock already taken in writer mode");
         }
+        System.out.println("NewLock = " + lock+ " ");
     }
 
     @Override
     public void jvnLockWrite() throws JvnException {
+        System.out.print("Write : OldLock = " + lock+ " ");
         switch (lock){
             case NL, RC:
-                jvnLocalServer.jvnLockWrite(id);
+                object = ((JvnObject) JvnServerImpl.jvnGetServer().jvnLockWrite(id)).jvnGetSharedObject();
                 lock = W;
                 break;
-            case WC, RWC:
+            case WC:
                 lock = W;
                 break;
             case W:
                 // Lock is already taken by application
                 break;
-            case R:
+            case R, RWC:
                 throw new JvnException("jvnLockWrite: Lock already taken in reader mode");
         }
+        System.out.println("NewLock = " + lock+ " ");
     }
 
     @Override
     public synchronized void jvnUnLock() throws JvnException {
+        System.out.print("Unlock : OldLock = " + lock+ " ");
         switch (lock){
             case R:
                 lock = RC;
@@ -72,9 +67,8 @@ public class JvnObjectImpl implements JvnObject{
                 lock = WC;
                 notify();
                 break;
-            default:
-                throw new JvnException("jvnUnLock: Lock is not currently used");
         }
+        System.out.println("NewLock = " + lock+ " ");
     }
 
     @Override
@@ -89,6 +83,7 @@ public class JvnObjectImpl implements JvnObject{
 
     @Override
     public synchronized void jvnInvalidateReader() throws JvnException {
+        System.out.print("InvalidateReader: NewLock = " + lock+ " ");
         switch (lock){
             case R:
                 try {
@@ -114,10 +109,12 @@ public class JvnObjectImpl implements JvnObject{
             default:
                 throw new JvnException("LockIllagalState: cannot be in the state "+lock+" when jvnInvalidateReader() is called");
         }
+        System.out.println("NewLock = " + lock+ " ");
     }
 
     @Override
     public synchronized Serializable jvnInvalidateWriter() throws JvnException {
+        System.out.print("InvalidateWriter: NewLock = " + lock+ " ");
         switch (lock){
             case W:
                 try {
@@ -141,11 +138,13 @@ public class JvnObjectImpl implements JvnObject{
             default:
                 throw new JvnException("jvnInvalidateWriter: LockIllagalState: cannot be in the state "+lock+" when jvnInvalidateWriter() is called");
         }
-        return object;
+        System.out.println("NewLock = " + lock+ " ");
+        return this;
     }
 
     @Override
     public synchronized Serializable jvnInvalidateWriterForReader() throws JvnException {
+        System.out.print("InvalidateWriterForReader: NewLock = " + lock+ " ");
         switch (lock){
             case W:
                 try {
@@ -165,6 +164,7 @@ public class JvnObjectImpl implements JvnObject{
             default:
                 throw new JvnException("jvnInvalidateWriterForReader: LockIllagalState: cannot be in the state "+lock+" when jvnInvalidateWriterForReader() is called");
         }
-        return object;
+        System.out.println("NewLock = " + lock+ " ");
+        return this;
     }
 }

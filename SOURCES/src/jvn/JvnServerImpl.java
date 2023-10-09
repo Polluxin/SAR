@@ -83,7 +83,7 @@ public class JvnServerImpl
 	throws jvn.JvnException { 
 		try {
 			assert(jvnRemoteCoord != null);
-			return new JvnObjectImpl(jvnRemoteCoord.jvnGetObjectId(), o, this);
+			return new JvnObjectImpl(jvnRemoteCoord.jvnGetObjectId(), o);
 		} catch (RemoteException e){
 			throw new JvnException("jvnCreateObject: "+e.getMessage());
 		}
@@ -120,7 +120,6 @@ public class JvnServerImpl
 			// Save object reference
 			if (obj != null) {
 				jvnObjectHashMap.put(obj.jvnGetObjectId(), obj);
-
 			}
 			return obj;
 		} catch (RemoteException e){
@@ -171,9 +170,9 @@ public class JvnServerImpl
   public void jvnInvalidateReader(int joi)
 	throws java.rmi.RemoteException,jvn.JvnException {
 		JvnObject jvnObject = jvnObjectHashMap.get(joi);
-		jvnObject.jvnInvalidateReader(); // /!\ May not be the good way
-		jvnRemoteCoord.notify();
-	};
+		System.out.println("JvnObject jvnInvalidateReader");
+		jvnObject.jvnInvalidateReader();
+	}
 	    
 	/**
 	* Invalidate the Write lock of the JVN object identified by id 
@@ -184,9 +183,9 @@ public class JvnServerImpl
   public Serializable jvnInvalidateWriter(int joi)
 	throws java.rmi.RemoteException,jvn.JvnException {
 	  JvnObject jvnObject = jvnObjectHashMap.get(joi);
-	  jvnObject.jvnInvalidateWriter(); // /!\ May not be the good way
-		return null;
-	};
+	  System.out.println("JvnObject jvnInvalidateWriter");
+	  return jvnObject.jvnInvalidateWriter();
+	}
 	
 	/**
 	* Reduce the Write lock of the JVN object identified by id 
@@ -197,9 +196,9 @@ public class JvnServerImpl
    public Serializable jvnInvalidateWriterForReader(int joi)
 	 throws java.rmi.RemoteException,jvn.JvnException {
 	   JvnObject jvnObject = jvnObjectHashMap.get(joi);
-	   jvnObject.jvnInvalidateWriterForReader(); // /!\ May not be the good way
-		return null;
-	 };
+	   System.out.println("JvnObject jvnInvalidateWriterForReader");
+	   return jvnObject.jvnInvalidateWriterForReader();
+	 }
 
 }
 

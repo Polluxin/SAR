@@ -18,27 +18,25 @@ public interface JvnObject extends Serializable {
 	/* A JvnObject should be serializable in order to be able to transfer 
        a reference to a JVN object remotely */
 
-	public void setJvnLocalServer(JvnLocalServer js);
-
 	/**
 	* Get a Read lock on the shared object 
 	* @throws JvnException
 	**/
-	public void jvnLockRead()
+	void jvnLockRead()
 	throws jvn.JvnException; 
 
 	/**
 	* Get a Write lock on the object 
 	* @throws JvnException
 	**/
-	public void jvnLockWrite()
+	void jvnLockWrite()
      	throws jvn.JvnException; 
 
 	/**
 	* Unlock  the object 
 	* @throws JvnException
 	**/
-	public void jvnUnLock()
+	void jvnUnLock()
 	throws jvn.JvnException; 
 	
 	
@@ -46,14 +44,14 @@ public interface JvnObject extends Serializable {
 	* Get the object identification
 	* @throws JvnException
 	**/
-	public int jvnGetObjectId()
+	int jvnGetObjectId()
 	throws jvn.JvnException; 
 	
 	/**
 	* Get the shared object associated to this JvnObject
 	* @throws JvnException
 	**/
-	public Serializable jvnGetSharedObject()
+	Serializable jvnGetSharedObject()
 	throws jvn.JvnException; 
 	
 	
@@ -61,7 +59,7 @@ public interface JvnObject extends Serializable {
 	* Invalidate the Read lock of the JVN object 
 	* @throws JvnException
 	**/
-  public void jvnInvalidateReader()
+    void jvnInvalidateReader()
 	throws jvn.JvnException;
 	    
 	/**
@@ -69,7 +67,7 @@ public interface JvnObject extends Serializable {
 	* @return the current JVN object state
 	* @throws JvnException
 	**/
-  public Serializable jvnInvalidateWriter()
+    Serializable jvnInvalidateWriter()
 	throws jvn.JvnException;
 	
 	/**
@@ -77,6 +75,6 @@ public interface JvnObject extends Serializable {
 	* @return the current JVN object state
 	* @throws JvnException
 	**/
-   public Serializable jvnInvalidateWriterForReader()
+    Serializable jvnInvalidateWriterForReader()
 	 throws jvn.JvnException;	
 }

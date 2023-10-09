@@ -12,13 +12,15 @@ import java.awt.event.*;
 
 
 import jvn.*;
+
+import javax.swing.*;
 import java.io.*;
 
 
 public class Irc {
 	public TextArea		text;
 	public TextField	data;
-	Frame 			frame;
+	JFrame 			frame;
 	JvnObject       sentence;
 
 
@@ -37,13 +39,14 @@ public class Irc {
 		JvnObject jo = js.jvnLookupObject("IRC");
 		   
 		if (jo == null) {
-			System.out.println("No jvnObject, created one");
+			System.out.println("No jvnObject found, created one");
 			jo = js.jvnCreateObject((Serializable) new Sentence());
 			// after creation, I have a write lock on the object
 			jo.jvnUnLock();
 			js.jvnRegisterObject("IRC", jo);
 		}
 		// create the graphical part of the Chat application
+		   System.out.println(jo.jvnGetObjectId());
 		 new Irc(jo);
 	   
 	   } catch (Exception e) {
@@ -57,7 +60,17 @@ public class Irc {
    **/
 	public Irc(JvnObject jo) {
 		sentence = jo;
-		frame=new Frame();
+		frame=new JFrame();
+		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		frame.addWindowListener(new WindowAdapter(){
+			public void windowClosing(WindowEvent e){
+				try {
+					JvnServerImpl.jvnGetServer().jvnTerminate();
+				} catch (JvnException ex) {
+					System.exit(-2);
+				}
+			}
+		});
 		frame.setLayout(new GridLayout(1,1));
 		text=new TextArea(10,60);
 		text.setEditable(false);
