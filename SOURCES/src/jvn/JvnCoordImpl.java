@@ -8,7 +8,6 @@
 
 package jvn;
 
-import java.rmi.Naming;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
@@ -24,8 +23,13 @@ public class JvnCoordImpl
 	
 
   /**
-	 * 
-	 */
+   * JvnCoordImpls attributes :
+   *  - namingService is a couple of hashmaps used to associate a name to an object ID.
+   *    Since a name, you can retrieve object ID and vice-versa
+   *  - readersFromId is a hashmap used to associate an object ID with all readers (servers)
+   *  - writersFromId is a hashmap used to associate an object ID with a reader (server)
+   *  - sharedObjects is a hashmap used to associate an object ID with a shared object
+   */
 	private static final long serialVersionUID = 1L;
     private Integer idSeq;
     private final JvnNamingService namingService;
