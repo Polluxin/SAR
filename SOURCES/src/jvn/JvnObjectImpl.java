@@ -9,12 +9,17 @@ public class JvnObjectImpl implements JvnObject{
     JvnLock lock = W;
     int id;
     Serializable object;
-    JvnLocalServer jvnLocalServer;
+    transient JvnLocalServer jvnLocalServer;
 
     public JvnObjectImpl(int id, Serializable o, JvnLocalServer jvnLocalServer) {
         this.id = id;
         object = o;
         this.jvnLocalServer = jvnLocalServer;
+    }
+
+    @Override
+    public void setJvnLocalServer(JvnLocalServer js) {
+        jvnLocalServer = js;
     }
 
     @Override

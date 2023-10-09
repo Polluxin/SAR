@@ -118,8 +118,10 @@ public class JvnServerImpl
 		try {
 			JvnObject obj =  jvnRemoteCoord.jvnLookupObject(jon, this);
 			// Save object reference
-			if (obj != null)
+			if (obj != null) {
 				jvnObjectHashMap.put(obj.jvnGetObjectId(), obj);
+
+			}
 			return obj;
 		} catch (RemoteException e){
 			throw new JvnException("jvnLookupObject: "+e.getMessage());
