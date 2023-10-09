@@ -68,7 +68,7 @@ public class JvnObjectImpl implements JvnObject{
                 lock = RC;
                 notify();
                 break;
-            case W:
+            case W, RWC:
                 lock = WC;
                 notify();
                 break;
@@ -103,6 +103,12 @@ public class JvnObjectImpl implements JvnObject{
                 lock = NL;
                 break;
             case RWC:
+                try {
+                    while (lock == RWC)
+                        wait();
+                } catch (InterruptedException e) {
+                    throw new JvnException("jvnInvalidateReader: Thread interrupted when waiting for lock");
+                }
                 lock = WC;
                 break;
             default:
@@ -122,11 +128,15 @@ public class JvnObjectImpl implements JvnObject{
                 }
                 lock = NL;
                 break;
+            case RWC:
+                try {
+                    while (lock == RWC)
+                        wait();
+                } catch (InterruptedException e) {
+                    throw new JvnException("jvnInvalidateWriter: Thread interrupted when waiting for lock");
+                }
             case WC:
                 lock = NL;
-                break;
-            case RWC:
-                lock = RC;
                 break;
             default:
                 throw new JvnException("jvnInvalidateWriter: LockIllagalState: cannot be in the state "+lock+" when jvnInvalidateWriter() is called");
@@ -150,7 +160,7 @@ public class JvnObjectImpl implements JvnObject{
                 lock = NL;
                 break;
             case RWC:
-                lock = RC;
+                lock = R;
                 break;
             default:
                 throw new JvnException("jvnInvalidateWriterForReader: LockIllagalState: cannot be in the state "+lock+" when jvnInvalidateWriterForReader() is called");
