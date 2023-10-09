@@ -38,6 +38,7 @@ public class JvnNamingService {
             arrayList.add(name);
             stringsFromId.put(id, arrayList);
         }
+        idFromString.put(name, id);
     }
 
     void removeName(String name, Integer id){
