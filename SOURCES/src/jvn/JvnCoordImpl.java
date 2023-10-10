@@ -8,6 +8,8 @@
 
 package jvn;
 
+import java.io.Serial;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
@@ -31,7 +33,8 @@ public class JvnCoordImpl
    *  - writersFromId is a hashmap used to associate an object ID with a reader (server)
    *  - sharedObjects is a hashmap used to associate an object ID with a shared object
    */
-	private static final long serialVersionUID = 1L;
+	@Serial
+    private static final long serialVersionUID = 1L;
     private Integer idSeq;
     private final JvnNamingService namingService;
     private final HashMap<Integer, List<JvnRemoteServer>> readersFromId;
@@ -108,14 +111,19 @@ public class JvnCoordImpl
    public Serializable jvnLockRead(int joi, JvnRemoteServer js)
    throws java.rmi.RemoteException, JvnException{
        // Check if there is a writer
-       JvnObject jvnObject;
+       JvnObject jvnObject = sharedObjects.get(joi);
         if (writersFromId.get(joi) != null) {
-            jvnObject = (JvnObject) writersFromId.get(joi).jvnInvalidateWriterForReader(joi);
+            // If the writer is connected
+            try {
+                // then we invalidate him and get the new object
+                jvnObject = (JvnObject) writersFromId.get(joi).jvnInvalidateWriterForReader(joi);
+                sharedObjects.put(joi, jvnObject);
+            } catch (RemoteException e){
+                // else we return the unmodified object
+                System.out.println("Client connexion lost");
+            }
+            // and we remove the writer from the list
             writersFromId.put(joi, null);
-            sharedObjects.put(joi, jvnObject);
-        }
-        else {
-            jvnObject = sharedObjects.get(joi);
         }
         readersFromId.get(joi).add(js);
         return jvnObject;
@@ -130,15 +138,17 @@ public class JvnCoordImpl
   **/
    public synchronized Serializable jvnLockWrite(int joi, JvnRemoteServer js)
    throws java.rmi.RemoteException, JvnException{
-       // Invalidate writers
-       JvnObject jvnObject;
+       // Invalidate writer
+       JvnObject jvnObject = sharedObjects.get(joi);
        if (writersFromId.get(joi) != null){
-           jvnObject = (JvnObject) writersFromId.get(joi).jvnInvalidateWriter(joi);
+           try {
+               jvnObject = (JvnObject) writersFromId.get(joi).jvnInvalidateWriter(joi);
+               writersFromId.put(joi, null);
+               sharedObjects.put(joi, jvnObject);
+           } catch (RemoteException e){
+               System.out.println("Client connexion lost");
+           }
            writersFromId.put(joi, null);
-           sharedObjects.put(joi, jvnObject);
-       }
-       else {
-           jvnObject = sharedObjects.get(joi);
        }
 
        Iterator<JvnRemoteServer> serverIterator = readersFromId.get(joi).iterator();
@@ -146,7 +156,11 @@ public class JvnCoordImpl
        // Invalidate readers
        while (serverIterator.hasNext()){
            JvnRemoteServer server = serverIterator.next();
-           server.jvnInvalidateReader(joi);
+           try {
+               server.jvnInvalidateReader(joi);
+           } catch (RemoteException e){
+               System.out.println("Client connexion lost");
+           }
            serverIterator.remove();
        }
        writersFromId.put(joi, js);
