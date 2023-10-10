@@ -63,6 +63,7 @@ public class JvnServerImpl
 	**/
 	public  void jvnTerminate()
 	throws jvn.JvnException {
+		jvnObjectHashMap.clear();
 		try {
 			jvnRemoteCoord.jvnTerminate(this);
 		} catch (RemoteException e){
