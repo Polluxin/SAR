@@ -65,8 +65,10 @@ public class Irc {
 		frame.addWindowListener(new WindowAdapter(){
 			public void windowClosing(WindowEvent e){
 				try {
+					System.out.println("Shutting down the localserver");
 					JvnServerImpl.jvnGetServer().jvnTerminate();
 				} catch (JvnException ex) {
+					ex.printStackTrace();
 					System.exit(-2);
 				}
 			}
