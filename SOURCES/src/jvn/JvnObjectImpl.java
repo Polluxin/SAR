@@ -83,7 +83,7 @@ public class JvnObjectImpl implements JvnObject{
 
     @Override
     public synchronized void jvnInvalidateReader() throws JvnException {
-        System.out.print("InvalidateReader: NewLock = " + lock+ " ");
+        System.out.print("InvalidateReader: OldLock = " + lock+ " ");
         switch (lock){
             case R:
                 try {
@@ -114,7 +114,7 @@ public class JvnObjectImpl implements JvnObject{
 
     @Override
     public synchronized Serializable jvnInvalidateWriter() throws JvnException {
-        System.out.print("InvalidateWriter: NewLock = " + lock+ " ");
+        System.out.print("InvalidateWriter: OldLock = " + lock+ " ");
         switch (lock){
             case W:
                 try {
@@ -144,7 +144,7 @@ public class JvnObjectImpl implements JvnObject{
 
     @Override
     public synchronized Serializable jvnInvalidateWriterForReader() throws JvnException {
-        System.out.print("InvalidateWriterForReader: NewLock = " + lock+ " ");
+        System.out.print("InvalidateWriterForReader: OldLock = " + lock+ " ");
         switch (lock){
             case W:
                 try {
