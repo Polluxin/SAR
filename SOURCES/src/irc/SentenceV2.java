@@ -12,7 +12,7 @@ import jvn.JvnAnnotationType;
 
 import java.io.Serial;
 
-public class SentenceV2 implements java.io.Serializable {
+public class SentenceV2 implements ISentence {
 	/**
 	 *
 	 */

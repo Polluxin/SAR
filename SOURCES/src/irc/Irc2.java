@@ -1,14 +1,12 @@
 /***
  * Irc class : simple implementation of a chat using JAVANAISE
- * Contact: 
- *
+ * Contact:
  * Authors: 
  */
 
 package irc;
 
 import jvn.JvnException;
-import jvn.JvnObject;
 import jvn.JvnProxy;
 import jvn.JvnServerImpl;
 
@@ -25,16 +23,16 @@ public class Irc2 {
 	public TextArea		text;
 	public TextField	data;
 	JFrame 			frame;
-	SentenceV2       sentence;
+	ISentence       sentence;
 
 
   /**
   * main method
   * create a JVN object nammed IRC for representing the Chat application
   **/
-	public static void main(String argv[]) {
+	public static void main(String[] argv) {
 	   try {
-		   SentenceV2 jo = (SentenceV2) JvnProxy.newInstance((Serializable) new SentenceV2(), "IRC");
+		   ISentence jo = (ISentence) JvnProxy.newInstance( new SentenceV2(), "IRC2");
 		   new Irc2(jo);
 	   
 	   } catch (Exception e) {
@@ -46,7 +44,7 @@ public class Irc2 {
    * IRC Constructor
    @param jo the JVN object representing the Chat
    **/
-	public Irc2(SentenceV2 jo) {
+	public Irc2(ISentence jo) {
 		sentence = jo;
 		frame=new JFrame();
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -56,7 +54,6 @@ public class Irc2 {
 					System.out.println("Shutting down the localserver");
 					JvnServerImpl.jvnGetServer().jvnTerminate();
 				} catch (JvnException ex) {
-					ex.printStackTrace();
 					System.exit(-2);
 				}
 			}
