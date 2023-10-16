@@ -1,7 +1,10 @@
 # JAVANAISE Project: SAR - M2GI
-
+SAR project
 ## Authors
+Eva GAILLARD & Geoffrey DAVID
 
-## How it works
+## Features
+  - Javanaise 1
+  - Javanaise 2
 
 ## Tests
