@@ -19,6 +19,7 @@ public class JvnProxy implements InvocationHandler {
             }
             jo = jvnObject;
         } catch (Exception e){
+
             e.printStackTrace();
         }
     }
@@ -40,16 +41,11 @@ public class JvnProxy implements InvocationHandler {
             System.out.println("Call to unannotated method");
             return method.invoke(jo.jvnGetSharedObject(), args);
         }
-
-        switch (n.name()) {
-            case JvnAnnotationType.WRITE:
-                jo.jvnLockWrite();
-                break;
-            case JvnAnnotationType.READ:
-                jo.jvnLockRead();
-                break;
-            default:
-                throw new JvnException("Unknown annotation used");
+        else if (n.name() == JvnAnnotationType.WRITE){
+            jo.jvnLockWrite();
+        }
+        else if (n.name() == JvnAnnotationType.READ){
+            jo.jvnLockRead();
         }
         result = method.invoke(jo.jvnGetSharedObject(), args);
         jo.jvnUnLock();
