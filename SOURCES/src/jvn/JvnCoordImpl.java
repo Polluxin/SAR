@@ -175,7 +175,8 @@ public class JvnCoordImpl
     public synchronized void jvnTerminate(JvnRemoteServer js)
 	 throws java.rmi.RemoteException, JvnException {
          for (Integer id: sharedObjects.keySet()){
-             writersFromId.replace(id, js, null);
+             if (writersFromId.replace(id, js, null))
+                 sharedObjects.put(id, (JvnObject) js.jvnInvalidateWriter(id));
              readersFromId.get(id).removeIf(server -> server == js);
          }
     }
