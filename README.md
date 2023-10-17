@@ -30,6 +30,6 @@ Before, the user must have used `JvnAnnotationType.WRITE` and `JvnAnnotationType
 Each application can use a limited amount of distributed objects defined by attribut `JvnServerImpl.CACHE_SIZE` (`5` by default).
 When the cache is full, the user will be avised with `JvnCacheSatured` exception.
 
-It is possible to clear the cache by using `JvnLocalServer.clearObjectCache()`.
+It is possible to clear the cache by using `JvnLocalServer.jvnClearObjectCache()`.
 
 ## Tests
