@@ -39,7 +39,7 @@ public class CacheClear {
         int counter = 0;
         for (int i = 0; i<number; i++){
             try {
-                jo = (JvnObject) JvnServerImpl.jvnGetServer().jvnLookupObject("Sentence " + i);
+                jo = JvnServerImpl.jvnGetServer().jvnLookupObject("Sentence " + i);
             } catch (JvnException e){
                 System.out.println("getSentences problem : " + e.getMessage());
                 return -1;
