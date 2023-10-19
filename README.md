@@ -28,8 +28,15 @@ Before, the user must have used `JvnAnnotationType.WRITE` and `JvnAnnotationType
 
 ### Application's objects cache management
 Each application can use a limited amount of distributed objects defined by attribut `JvnServerImpl.CACHE_SIZE` (`5` by default).
-When the cache is full, the user will be avised with `JvnCacheSaturedException` exception.
+When the cache is full it is automatically cleared.
 
-It is possible to clear the cache by using `JvnLocalServer.jvnClearObjectCache()`.
+It is possible to clear manually the cache by using `JvnLocalServer.jvnClearObjectsCache()`.
 
 ## Tests
+
+### Manual tests
+
+#### CacheTests/CacheClear
+Use to briefly evaluate cache behavior by creating a number of objects, adding them, then reading them and manually checking their consistency. Every `CACHE_SIZE` object, the server cache is emptied :
+
+### Automatic tests
