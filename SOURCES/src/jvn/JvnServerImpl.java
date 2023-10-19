@@ -35,7 +35,7 @@ public class JvnServerImpl
   /**
   * Default constructor
   **/
-	private JvnServerImpl() throws MalformedURLException, NotBoundException, RemoteException {
+	private JvnServerImpl() throws NotBoundException, RemoteException {
 		super();
 		// Find reference to jvnRemoteCoord
 		jvnRemoteCoord = (JvnRemoteCoord) LocateRegistry.getRegistry().lookup("Coord");
