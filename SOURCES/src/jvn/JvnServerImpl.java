@@ -30,6 +30,7 @@ public class JvnServerImpl
 	private static JvnServerImpl js = null;
 	private final JvnRemoteCoord jvnRemoteCoord;
 	private final HashMap<Integer, JvnObject> jvnObjectHashMap;
+	private final int CACHE_SIZE = 5;
 
   /**
   * Default constructor
@@ -66,10 +67,26 @@ public class JvnServerImpl
 		try {
 			jvnRemoteCoord.jvnTerminate(this);
 		} catch (RemoteException e){
-			e.printStackTrace();
+			System.out.println("Coordinator connection problem : "+e.getMessage());
 		}
 	}
-	
+
+	@Override
+	public void jvnClearObjectsCache() {
+
+	}
+
+	private void clearCache(){
+		int n = jvnObjectHashMap.size();
+		try {
+			jvnTerminate();
+		} catch (JvnException e) {
+			System.out.println("Coordinator problem : "+e.getMessage());
+		}
+		jvnObjectHashMap.clear();
+		System.out.println("LocalServer's cache cleared ("+ n +"objects cleared), coordinator notified");
+	}
+
 	/**
 	* creation of a JVN object
 	* @param o : the JVN object state
@@ -77,7 +94,6 @@ public class JvnServerImpl
 	public  JvnObject jvnCreateObject(Serializable o)
 	throws jvn.JvnException { 
 		try {
-			assert(jvnRemoteCoord != null);
 			return new JvnObjectImpl(jvnRemoteCoord.jvnGetObjectId(), o);
 		} catch (RemoteException e){
 			throw new JvnException("jvnCreateObject: "+e.getMessage());
@@ -91,6 +107,9 @@ public class JvnServerImpl
 	**/
 	public  void jvnRegisterObject(String jon, JvnObject jo)
 	throws jvn.JvnException {
+		// Object cache management
+		if (jvnObjectHashMap.size() > CACHE_SIZE)
+			clearCache();
 
 		try {
 			jvnRemoteCoord.jvnRegisterObject(jon, jo, this);
@@ -108,6 +127,10 @@ public class JvnServerImpl
 	**/
 	public  JvnObject jvnLookupObject(String jon)
 	throws jvn.JvnException {
+		// Object cache management
+		if (jvnObjectHashMap.size() > CACHE_SIZE)
+			clearCache();
+
 		try {
 			JvnObject obj =  jvnRemoteCoord.jvnLookupObject(jon, this);
 			// Save object reference
@@ -131,7 +154,6 @@ public class JvnServerImpl
 	   try {
 		   return jvnRemoteCoord.jvnLockRead(joi, this);
 	   } catch (RemoteException e){
-		   e.printStackTrace();
 		   throw new JvnException("jvnLockRead: "+e.getMessage());
 	   }
 	}
@@ -147,7 +169,6 @@ public class JvnServerImpl
 	   try {
 		   return jvnRemoteCoord.jvnLockWrite(joi, this);
 	   } catch (RemoteException e){
-		   e.printStackTrace();
 		   throw new JvnException("jvnLockWrite: "+e.getMessage());
 	   }
 	}	
