@@ -24,6 +24,10 @@ public class SentenceV2 implements ISentence {
 		data = "";
 	}
 
+	public SentenceV2(String s) {
+		data = s;
+	}
+
 	@JvnAnnotation(name = JvnAnnotationType.WRITE)
 	public void write(String text) {
 		data = text;

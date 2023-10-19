@@ -83,7 +83,7 @@ public class JvnServerImpl
 			System.out.println("Coordinator problem : "+e.getMessage());
 		}
 		jvnObjectHashMap.clear();
-		System.out.println("LocalServer's cache cleared ("+ n +"objects cleared), coordinator notified");
+		System.out.println("LocalServer's cache cleared ("+ n +" objects cleared), coordinator notified");
 	}
 
 	/**
