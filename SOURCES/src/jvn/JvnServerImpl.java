@@ -73,7 +73,7 @@ public class JvnServerImpl
 
 	@Override
 	public void jvnClearObjectsCache() {
-
+		clearCache();
 	}
 
 	private void clearCache(){
