@@ -8,7 +8,7 @@
 
 package jvn;
 
-import java.io.Serial;
+import java.io.*;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -36,30 +36,37 @@ public class JvnCoordImpl
 	@Serial
     private static final long serialVersionUID = 1L;
     private Integer idSeq;
-    private final JvnNamingService namingService;
-    private final HashMap<Integer, List<JvnRemoteServer>> readersFromId;
-    private final HashMap<Integer, JvnRemoteServer> writersFromId;
-    private final HashMap<Integer, Serializable> sharedObjects;
+    private JvnNamingService namingService;
+    private HashMap<Integer, List<JvnRemoteServer>> readersFromId;
+    private HashMap<Integer, JvnRemoteServer> writersFromId;
+    private HashMap<Integer, Serializable> sharedObjects;
+
+    private final String statesDir = "CoordStates/";
 
 /**
   * Default constructor
  **/
 	private JvnCoordImpl() throws Exception {
-        idSeq = -1;
-		namingService = new JvnNamingService();
-        readersFromId = new HashMap<>();
-        writersFromId = new HashMap<>();
-        sharedObjects = new HashMap<>();
+        try {
+            // try to retrive last states if they exist
+            restoreStates();
+        } catch (JvnException e){
+            // Cannot retrieve last states, so we create new objects
+            idSeq = -1;
+            namingService = new JvnNamingService();
+            readersFromId = new HashMap<>();
+            writersFromId = new HashMap<>();
+            sharedObjects = new HashMap<>();
+        }
 	}
 
     public static void main(String[] argv) {
         try {
             Registry registry = LocateRegistry.createRegistry(1099);
             registry.bind("Coord", new JvnCoordImpl());
-//            Naming.rebind("rmi://localhost/Coord", new JvnCoordImpl());
             System.out.println("Coordinator ready");
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Coordinator initialization problem :"+ e.getMessage());
         }
 
     }
@@ -87,6 +94,7 @@ public class JvnCoordImpl
     readersFromId.put(jo.jvnGetObjectId(), new ArrayList<>());
     writersFromId.put(jo.jvnGetObjectId(), null);
     sharedObjects.put(jo.jvnGetObjectId(), jo.jvnGetSharedObject());
+    saveStates();
   }
   
   /**
@@ -127,6 +135,7 @@ public class JvnCoordImpl
             writersFromId.put(joi, null);
         }
         readersFromId.get(joi).add(js);
+        saveStates();
         return obj;
    }
 
@@ -165,6 +174,7 @@ public class JvnCoordImpl
            serverIterator.remove();
        }
        writersFromId.put(joi, js);
+       saveStates();
        return obj;
    }
 
@@ -180,7 +190,59 @@ public class JvnCoordImpl
                  sharedObjects.put(id, (Serializable) js.jvnInvalidateWriter(id));
              readersFromId.get(id).removeIf(server -> server == js);
          }
+         saveStates();
     }
+
+    /**
+     * Coordinator's crash management, used to frequently save the coordinator
+     * overall state on disk.
+     **/
+    private void saveStates(){
+        try (
+                ObjectOutputStream osnaming = new ObjectOutputStream(new FileOutputStream(statesDir+"namingService.sta"));
+                ObjectOutputStream osobjs = new ObjectOutputStream(new FileOutputStream(statesDir+"sharedObjects.sta"));
+                ObjectOutputStream osreaders = new ObjectOutputStream(new FileOutputStream(statesDir+"readersFromId.sta"));
+                ObjectOutputStream oswriters = new ObjectOutputStream(new FileOutputStream(statesDir+"writersFromId.sta"));
+                ObjectOutputStream osids = new ObjectOutputStream(new FileOutputStream(statesDir+"lastIdSeq.sta"))
+        ){
+            osnaming.writeObject(namingService);
+            osobjs.writeObject(sharedObjects);
+            osreaders.writeObject(readersFromId);
+            oswriters.writeObject(writersFromId);
+            osids.writeObject(idSeq);
+        }
+        catch (IOException e){
+            System.out.println("Not able to save states");
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Coordinator's crash management, used to retrieve last coordinator's states
+     * since last crash using the disk memory.
+     */
+    private void restoreStates() throws JvnException {
+        try (
+                ObjectInputStream osnaming = new ObjectInputStream(new FileInputStream(statesDir+"namingService.sta"));
+                ObjectInputStream osobjs = new ObjectInputStream(new FileInputStream(statesDir+"sharedObjects.sta"));
+                ObjectInputStream osreaders = new ObjectInputStream(new FileInputStream(statesDir+"readersFromId.sta"));
+                ObjectInputStream oswriters = new ObjectInputStream(new FileInputStream(statesDir+"writersFromId.sta"));
+                ObjectInputStream osids = new ObjectInputStream(new FileInputStream(statesDir+"lastIdSeq.sta"))
+        ) {
+            namingService = (JvnNamingService) osnaming.readObject();
+            sharedObjects = (HashMap<Integer, Serializable>) osobjs.readObject();
+            readersFromId = (HashMap<Integer, List<JvnRemoteServer>>) osreaders.readObject();
+            writersFromId = (HashMap<Integer, JvnRemoteServer>) oswriters.readObject();
+            idSeq = (Integer) osids.readObject();
+        } catch (IOException e) {
+            System.out.println("Unable to restore states : files problem : " + e.getMessage());
+            throw new JvnException();
+        } catch (ClassNotFoundException e) {
+            System.out.println("Unable to restore states : reading files problem : " + e.getMessage());
+            throw new JvnException();
+        }
+    }
+
 }
 
  
