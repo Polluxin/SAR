@@ -1,5 +1,5 @@
-# JAVANAISE Project: SAR - M2GI
-SAR project : Distributed object system
+# SAR: JAVANAISE Project - M2GI
+SAR project : Distributed objects system called `Javanaise`
 
 ## Authors
 Eva GAILLARD & Geoffrey DAVID
