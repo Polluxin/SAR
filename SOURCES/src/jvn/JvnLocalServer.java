@@ -2,10 +2,8 @@
  * JAVANAISE API
  * JvnLocalServer interface
  * Defines the local interface provided by a JVN server 
- * An application uses the Javanaise service through the local interface provided by the Jvn server 
- * Contact: 
- *
- * Authors: 
+ * An application uses the Javanaise service through the local interface provided by the Jvn server
+ * Authors:
  */
 
 package jvn;
@@ -22,28 +20,25 @@ public interface JvnLocalServer {
 	/**
 	* create of a JVN object
 	* @param jos : the JVN object state
-  * @return the JVN object 
-	* @throws JvnException
+  * @return the JVN object
 	**/
-	public  JvnObject jvnCreateObject(Serializable jos)
+	JvnObject jvnCreateObject(Serializable jos)
 	throws jvn.JvnException ; 
 	
 	/**
 	* Associate a symbolic name with a JVN object
 	* @param jon : the JVN object name
-	* @param jo : the JVN object 
-	* @throws JvnException
+	* @param jo : the JVN object
 	**/
-	public  void jvnRegisterObject(String jon, JvnObject jo)
+	void jvnRegisterObject(String jon, JvnObject jo)
 	throws jvn.JvnException; 
 	
 	/**
 	* Get the reference of a JVN object associated to a symbolic name
 	* @param jon : the JVN object symbolic name
-	* @return the JVN object 
-	* @throws JvnException
+	* @return the JVN object
 	**/
-	public  JvnObject jvnLookupObject(String jon)
+	JvnObject jvnLookupObject(String jon)
 	throws jvn.JvnException ; 
 	
 	
@@ -51,27 +46,26 @@ public interface JvnLocalServer {
 	* Get a Read lock on a JVN object 
 	* @param joi : the JVN object identification
 	* @return the current JVN object state
-	* @throws  JvnException
 	**/
-   public Serializable jvnLockRead(int joi)
+   Serializable jvnLockRead(int joi)
 	 throws JvnException;
 
 	/**
 	* Get a Write lock on a JVN object 
 	* @param joi : the JVN object identification
 	* @return the current JVN object state
-	* @throws  JvnException
 	**/
-   public Serializable jvnLockWrite(int joi)
+   Serializable jvnLockWrite(int joi)
 	 throws JvnException;
 
          
    /**
     * The JVN service is not used anymore by the application
-    * @throws JvnException
     **/
-   public  void jvnTerminate()
-   throws jvn.JvnException; 
+   void jvnTerminate()
+   throws jvn.JvnException;
+
+   void jvnClearObjectsCache();
 }
 
  
