@@ -40,3 +40,38 @@ It is possible to clear manually the cache by using `JvnLocalServer.jvnClearObje
 Use to briefly evaluate cache behavior by creating a number of objects, adding them, then reading them and manually checking their consistency. Every `CACHE_SIZE` object, the server cache is emptied :
 
 ### Automatic tests
+
+#### Simple_test
+
+<u>Description</u> <br />
+Create an interception object that writes to and reads from the server once
+
+<u>Execution</u> <br />
+- run JvnCoordImpl
+- run Simple_test
+- stop Simple_test at the end of the execution
+
+#### Two_objects
+
+<u>Description</u> <br />
+Creates two interception objects that execute in order:
+object 1: read, write, read
+object 2: read, write, read
+object 1: read
+
+<u>Execution</u> <br />
+- run JvnCoordImpl
+- run Two_objects
+- stop Two_objects at the end of the execution
+
+#### Locks
+
+<u>Description</u> <br />
+Create n interception objects that execute m times : all the objects one by one read, write, read
+
+<u>Execution</u> <br />
+- run JvnCoordImpl
+- run Locks
+- stop Locks at the end of the execution
+
+
