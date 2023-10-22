@@ -1,5 +1,5 @@
-# JAVANAISE Project: SAR - M2GI
-SAR project : Distributed object system
+# SAR: JAVANAISE Project - M2GI
+SAR project : Distributed objects system called `Javanaise`
 
 ## Authors
 Eva GAILLARD & Geoffrey DAVID
@@ -34,6 +34,10 @@ It is possible to clear manually the cache by using `JvnLocalServer.jvnClearObje
 
 ### Client's crash management
 If the coordinator lost connection with a client, it will remove all reader/writer status it may have to any shared object. The coordinator will print a message "Client connection lost" if it happens.
+
+## Coordinator's crash management
+The status of the coordinator's tables is regularly saved in the directory `CoordStates`. When the coordinator is launched, it attempts to retrieve previous states.
+Note: A current limitation is that a client will not be automaticly disconnected/informed that the coordinator is down. Moreover, it has to retrieve the reference to new coordinator launched using `Registry`.
 
 ## Tests
 
