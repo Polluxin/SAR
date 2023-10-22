@@ -4,6 +4,8 @@ SAR project : Distributed objects system called `Javanaise`
 ## Authors
 Eva GAILLARD & Geoffrey DAVID
 
+## How to get started
+
 ## Javanaise API
 
 ### Version 1
