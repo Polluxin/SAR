@@ -16,15 +16,14 @@ public class IrcManipulator {
     }
 
     IrcManipulator(){
-        frame = new JFrame();
-        frame.setLayout(new GridLayout());
+        frame = new JFrame("IRC Manipulator");
+        frame.setLayout(new GridLayout(2,2));
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         Button create = new Button("Create an IRC");
         create.addActionListener(new createListener());
 
         objName = new TextField();
-
 
         frame.add(objName);
         frame.add(create);
