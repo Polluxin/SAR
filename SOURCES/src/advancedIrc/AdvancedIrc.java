@@ -1,12 +1,5 @@
 package advancedIrc;
 
-import cacheTests.CacheClear;
-import irc.ISentence;
-import irc.Irc2;
-import irc.SentenceV2;
-import jvn.JvnProxy;
-import jvn.JvnServerImpl;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
