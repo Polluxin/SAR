@@ -98,6 +98,7 @@ public class Irc2 {
 		irc.text.append(s+"\n");
 	   } catch (Exception je) {
 		   System.out.println("IRC problem : " + je.getMessage());
+		   je.printStackTrace();
 	   }
 	}
 }
@@ -122,6 +123,7 @@ public class Irc2 {
 		irc.sentence.write(s);
 	 } catch (Exception je) {
 		   System.out.println("IRC problem  : " + je.getMessage());
+		   je.printStackTrace();
 	 }
 	}
 }

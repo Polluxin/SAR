@@ -20,7 +20,7 @@ public class JvnObjectImpl implements JvnObject{
         System.out.print("Read : OldLock = " + lock+ " ");
         switch (lock){
             case NL:
-                object = ((JvnObject) JvnServerImpl.jvnGetServer().jvnLockRead(id)).jvnGetSharedObject();
+                object = JvnServerImpl.jvnGetServer().jvnLockRead(id);
                 lock = R;
                 break;
             case RC:
@@ -40,7 +40,7 @@ public class JvnObjectImpl implements JvnObject{
         System.out.print("Write : OldLock = " + lock+ " ");
         switch (lock){
             case NL, RC:
-                object = ((JvnObject) JvnServerImpl.jvnGetServer().jvnLockWrite(id)).jvnGetSharedObject();
+                object = JvnServerImpl.jvnGetServer().jvnLockWrite(id);
                 lock = W;
                 break;
             case WC:
@@ -139,7 +139,7 @@ public class JvnObjectImpl implements JvnObject{
                 throw new JvnException("jvnInvalidateWriter: LockIllagalState: cannot be in the state "+lock+" when jvnInvalidateWriter() is called");
         }
         System.out.println("NewLock = " + lock+ " ");
-        return this;
+        return jvnGetSharedObject();
     }
 
     @Override
@@ -165,6 +165,6 @@ public class JvnObjectImpl implements JvnObject{
                 throw new JvnException("jvnInvalidateWriterForReader: LockIllagalState: cannot be in the state "+lock+" when jvnInvalidateWriterForReader() is called");
         }
         System.out.println("NewLock = " + lock+ " ");
-        return this;
+        return jvnGetSharedObject();
     }
 }
