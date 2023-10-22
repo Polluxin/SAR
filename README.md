@@ -1,8 +1,10 @@
-# JAVANAISE Project: SAR - M2GI
-SAR project : Distributed object system
+# SAR: JAVANAISE Project - M2GI
+SAR project : Distributed objects system called `Javanaise`
 
 ## Authors
 Eva GAILLARD & Geoffrey DAVID
+
+## How to get started
 
 ## Javanaise API
 
@@ -32,12 +34,28 @@ When the cache is full it is automatically cleared.
 
 It is possible to clear manually the cache by using `JvnLocalServer.jvnClearObjectsCache()`.
 
+### Client's crash management
+If the coordinator lost connection with a client, it will remove all reader/writer status it may have to any shared object. The coordinator will print a message "Client connection lost" if it happens.
+
+### Coordinator's crash management
+The status of the coordinator's tables is regularly saved in the directory `CoordStates`. When the coordinator is launched, it attempts to retrieve previous states.
+Note: A current limitation is that a client will not be automaticly disconnected/informed that the coordinator is down. Moreover, it has to retrieve the reference to new coordinator launched using `Registry`.
+
 ## Tests
 
 ### Manual tests
 
 #### CacheTests/CacheClear
-Use to briefly evaluate cache behavior by creating a number of objects, adding them, then reading them and manually checking their consistency. Every `CACHE_SIZE` object, the server cache is emptied :
+Use to briefly evaluate cache behavior by creating a number of objects, adding them, then reading them and manually checking their consistency. Every `CACHE_SIZE` object, the server cache is emptied.
+
+#### Irc
+Irc is the initial given test used to verify Javanaise first version.
+
+#### Irc2
+Irc2 is a teste used to verify Javanaise 2 implementation (dynamic proxies). When called with an argument, it will create or lookup a distributed object named like first argument.
+
+#### IrcManipulator
+IrcManipulator is an interface that allows to create multiple Irc2 linked to choosen object running in a new process. Since memory of each process is not shared, it demonstrates the correct behavior of Javanaise.
 
 ### Automatic tests
 

@@ -23,17 +23,24 @@ public class Irc2 {
 	public TextField	data;
 	JFrame 			frame;
 	ISentence       sentence;
+	static String name;
 
 
   /**
   * main method
-  * create a JVN object nammed IRC for representing the Chat application
+  * create a JVN object nammed IRC2 or given in argument for representing the Chat application
   **/
 	public static void main(String[] argv) {
 	   try {
-		   ISentence jo = (ISentence) JvnProxy.newInstance( new SentenceV2(), "IRC2");
+		   name = "IRC2";
+		   if (argv.length != 0){
+			   name = argv[0];
+		   }
+
+		   ISentence jo = (ISentence) JvnProxy.newInstance( new SentenceV2(), name);
+		   System.out.println("New instance of "+name+" distributed object");
 		   new Irc2(jo);
-	   
+
 	   } catch (Exception e) {
 		   System.out.println("IRC problem : " + e.getMessage());
 	   }
@@ -45,7 +52,7 @@ public class Irc2 {
    **/
 	public Irc2(ISentence jo) {
 		sentence = jo;
-		frame=new JFrame();
+		frame=new JFrame("Distributed object "+name);
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		frame.addWindowListener(new WindowAdapter(){
 			public void windowClosing(WindowEvent e){
@@ -98,6 +105,7 @@ public class Irc2 {
 		irc.text.append(s+"\n");
 	   } catch (Exception je) {
 		   System.out.println("IRC problem : " + je.getMessage());
+		   je.printStackTrace();
 	   }
 	}
 }
@@ -122,6 +130,7 @@ public class Irc2 {
 		irc.sentence.write(s);
 	 } catch (Exception je) {
 		   System.out.println("IRC problem  : " + je.getMessage());
+		   je.printStackTrace();
 	 }
 	}
 }
