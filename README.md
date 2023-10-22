@@ -32,7 +32,7 @@ When the cache is full it is automatically cleared.
 
 It is possible to clear manually the cache by using `JvnLocalServer.jvnClearObjectsCache()`.
 
-### Client's crash management
+## Client's crash management
 If the coordinator lost connection with a client, it will remove all reader/writer status it may have to any shared object. The coordinator will print a message "Client connection lost" if it happens.
 
 ## Coordinator's crash management
