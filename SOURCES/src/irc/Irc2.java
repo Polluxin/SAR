@@ -52,7 +52,7 @@ public class Irc2 {
    **/
 	public Irc2(ISentence jo) {
 		sentence = jo;
-		frame=new JFrame(name+" user");
+		frame=new JFrame("Distributed object "+name);
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		frame.addWindowListener(new WindowAdapter(){
 			public void windowClosing(WindowEvent e){
