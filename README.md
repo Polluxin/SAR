@@ -4,6 +4,13 @@ SAR project : Distributed objects system called `Javanaise`
 ## Authors
 Eva GAILLARD & Geoffrey DAVID
 
+## How to get started
+There is some `jar` files used to launch some tests. To launch, just use following commands:
+  - `java -jar Coord.jar` to launch coordinator (mandatory for others jars to work properly)
+  - `java -jar Irc2.jar` to launch Irc2 test file
+  - `java -jar Manipulator.jar` to launch Manipulator test file (be aware that creates processes using Irc2.jar so that it works only on Linux System since jar path is not calibrated on other users OS System)
+  - `./BurstExec.sh` to launch bash script for burst test
+
 ## Javanaise API
 
 ### Version 1
