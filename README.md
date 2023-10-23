@@ -47,3 +47,24 @@ Note: A current limitation is that a client will not be automaticly disconnected
 Use to briefly evaluate cache behavior by creating a number of objects, adding them, then reading them and manually checking their consistency. Every `CACHE_SIZE` object, the server cache is emptied :
 
 ### Automatic tests
+#### Simple_test
+
+<u>Description</u> <br />
+Create an interception object that writes and reads to and from the server once
+
+<u>Execution</u> <br />
+- run JvnCoordImpl
+- run Simple_test
+- stop Simple_test at the end of the execution
+
+#### Burst
+
+<u>Description</u> <br />
+creates multiple servers that can be called by multiple objects
+
+<u>Execution</u> <br />
+- run `sh BurstCompile.sh` in folder irc
+- run `sh BurstExec.sh` in the same folder
+
+<u>Modify</u> <br />
+You can modify the test by changing the calls in the BurstExec.sh file
