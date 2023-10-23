@@ -43,9 +43,6 @@ Note: A current limitation is that a client will not be automaticly disconnected
 
 ### Manual tests
 
-#### CacheTests/CacheClear
-Use to briefly evaluate cache behavior by creating a number of objects, adding them, then reading them and manually checking their consistency. Every `CACHE_SIZE` object, the server cache is emptied.
-
 #### Irc
 Irc is the initial given test used to verify Javanaise first version.
 
