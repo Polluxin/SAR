@@ -1,10 +1,11 @@
 package jvn;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class JvnNamingService {
+public class JvnNamingService implements Serializable {
 
     private HashMap<Integer, List<String>> stringsFromId;
     private HashMap<String, Integer> idFromString;
