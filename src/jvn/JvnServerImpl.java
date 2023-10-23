@@ -66,7 +66,7 @@ public class JvnServerImpl
 		try {
 			jvnRemoteCoord.jvnTerminate(this);
 		} catch (RemoteException e){
-			System.out.println("Coordinator connection problem : "+e.getMessage());
+			throw new JvnException("Coordinator connection problem : "+e.getMessage());
 		}
 	}
 
@@ -181,7 +181,6 @@ public class JvnServerImpl
   public void jvnInvalidateReader(int joi)
 	throws java.rmi.RemoteException,jvn.JvnException {
 		JvnObject jvnObject = jvnObjectHashMap.get(joi);
-		System.out.println("JvnObject jvnInvalidateReader");
 		jvnObject.jvnInvalidateReader();
 	}
 	    
@@ -193,7 +192,6 @@ public class JvnServerImpl
   public Serializable jvnInvalidateWriter(int joi)
 	throws java.rmi.RemoteException,jvn.JvnException {
 	  JvnObject jvnObject = jvnObjectHashMap.get(joi);
-	  System.out.println("JvnObject jvnInvalidateWriter");
 	  return jvnObject.jvnInvalidateWriter();
 	}
 	
@@ -205,7 +203,6 @@ public class JvnServerImpl
    public Serializable jvnInvalidateWriterForReader(int joi)
 	 throws java.rmi.RemoteException,jvn.JvnException {
 	   JvnObject jvnObject = jvnObjectHashMap.get(joi);
-	   System.out.println("JvnObject jvnInvalidateWriterForReader");
 	   return jvnObject.jvnInvalidateWriterForReader();
 	 }
 
