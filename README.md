@@ -69,8 +69,7 @@ Create an interception object that writes and reads to and from the server once
 creates multiple servers that can be called by multiple objects
 
 <u>Execution</u> <br />
-- run `sh BurstCompile.sh` in folder irc
-- run `sh BurstExec.sh` in the same folder
+- run `sh BurstExec.sh` in irc folder
 
 <u>Modify</u> <br />
 You can modify the test by changing the calls in the BurstExec.sh file
