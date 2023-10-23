@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Irc:jar">
+    <output-path>$PROJECT_DIR$/src</output-path>
+    <root id="archive" name="SAR.jar">
+      <element id="module-output" name="SAR" />
+    </root>
+  </artifact>
+</component>

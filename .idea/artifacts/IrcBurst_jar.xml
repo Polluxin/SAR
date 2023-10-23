@@ -1,0 +1,11 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="IrcBurst:jar">
+    <output-path>$PROJECT_DIR$/src</output-path>
+    <root id="archive" name="Irc2Burst.jar">
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/src/cacheTests/META-INF/MANIFEST.MF" />
+      </element>
+      <element id="module-output" name="SAR" />
+    </root>
+  </artifact>
+</component>

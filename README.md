@@ -62,34 +62,24 @@ IrcManipulator is an interface that allows to create multiple Irc2 linked to cho
 #### Simple_test
 
 <u>Description</u> <br />
-Create an interception object that writes to and reads from the server once
+Create an interception object that writes and reads to and from the server once
 
 <u>Execution</u> <br />
 - run JvnCoordImpl
 - run Simple_test
 - stop Simple_test at the end of the execution
 
-#### Two_objects
+#### Burst
 
 <u>Description</u> <br />
-Creates two interception objects that execute in order:
-object 1: read, write, read
-object 2: read, write, read
-object 1: read
+creates multiple servers that can be called by multiple objects
 
 <u>Execution</u> <br />
-- run JvnCoordImpl
-- run Two_objects
-- stop Two_objects at the end of the execution
+- run `sh BurstCompile.sh` in folder tests
+- run `sh BurstExec.sh` in the same folder
 
-#### Locks
+<u>Modify</u> <br />
+You can modify the test by changing the calls in the BurstExec.sh file
 
-<u>Description</u> <br />
-Create n interception objects that execute m times : all the objects one by one read, write, read
-
-<u>Execution</u> <br />
-- run JvnCoordImpl
-- run Locks
-- stop Locks at the end of the execution
 
 
