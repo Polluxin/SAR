@@ -40,7 +40,7 @@ public class IrcManipulator {
         public void actionPerformed(ActionEvent e) {
             Runtime runtime = Runtime.getRuntime();
             try {
-                runtime.exec("java -jar jars/Irc2.jar "+objName.getText());
+                runtime.exec("java -jar Irc2.jar "+objName.getText());
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
