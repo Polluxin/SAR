@@ -1,4 +1,4 @@
-package tests;
+package irc;
 
 import irc.ISentence;
 import irc.SentenceV2;
